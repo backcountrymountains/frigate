@@ -164,6 +164,8 @@ Browser support for H.265 (HEVC) is limited and depends on the operating system,
 
   You may also need to enable HEVC and hardware decoding in the browser itself (for example, Chrome's Settings → System → "Use hardware acceleration when available"). HEVC hardware support varies widely by GPU, OS, and browser version.
 
+- **Firefox on Windows: `Failed to play recordings (error 3)` with `Utility MF Media Engine CDM only support for media engine playback`.** Firefox caps how many videos can be hardware decoded at once, and H.265 cannot play without it. See [this FAQ entry](/configuration/live#firefox-on-windows-fails-to-play-h265-streams-or-recordings) for the `about:config` fix.
+
 #### Step 3: Clean up damaged packets from the camera
 
 If the error is **intermittent** (the same recording plays after a page refresh, or fails only after playing for a while), the camera is most likely emitting occasional corrupt or malformed packets. Some camera models are more prone to this than others. Routing the stream through go2rtc's `ffmpeg` module often "cleans up" the stream enough for the browser to decode it, even without changing the codec:

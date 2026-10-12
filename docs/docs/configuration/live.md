@@ -19,7 +19,7 @@ The jsmpeg live view will use more browser and client GPU resources. Using go2rt
 | Source | Frame Rate                            | Resolution | Audio                        | Requires go2rtc | Notes                                                                                                                                                               |
 | ------ | ------------------------------------- | ---------- | ---------------------------- | --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | jsmpeg | same as `detect -> fps`, capped at 10 | 720p       | no                           | no              | Resolution is configurable, but go2rtc is recommended if you want higher resolutions and better frame rates. jsmpeg is Frigate's default without go2rtc configured. |
-| mse    | native                                | native     | yes (depends on audio codec) | yes             | iPhone requires iOS 17.1+, Firefox is h.264 only. This is Frigate's default when go2rtc is configured.                                                              |
+| mse    | native                                | native     | yes (depends on audio codec) | yes             | iPhone requires iOS 17.1+, Firefox is h.264 only (h.265 on Windows, see FAQ). This is Frigate's default when go2rtc is configured.                                  |
 | webrtc | native                                | native     | yes (depends on audio codec) | yes             | Requires extra configuration. Frigate attempts to use WebRTC when MSE fails or when using a camera's two-way talk feature.                                          |
 
 :::info
@@ -426,6 +426,14 @@ Work through the [go2rtc troubleshooting guide](/troubleshooting/go2rtc#live-vie
 
 1. Restream through go2rtc's FFmpeg module by prefixing your source with `ffmpeg:`, for example `- ffmpeg:rtsp://user:password@192.168.1.5:554/stream`.
 2. If that doesn't help, transcode to compatible codecs: `- ffmpeg:rtsp://user:password@192.168.1.5:554/stream#video=h264#audio=aac#hardware`.
+
+</FaqItem>
+
+<FaqItem id="firefox-on-windows-fails-to-play-h265-streams-or-recordings" question={'Firefox on Windows fails to play H.265 streams or recordings with "Utility MF Media Engine CDM only support for media engine playback". Why?'}>
+
+Firefox on Windows plays H.265 only with hardware decoding, and it caps the number of videos that can use hardware decoding at the same time with the `media.wmf.dxva.max-videos` setting (default `8`). Review previews, live tiles, and recordings on the page all count toward that cap. Once it is reached, H.264 videos keep playing but the next H.265 video fails with this error (shown as `Failed to play recordings (error 3)` on recordings). This is why it typically happens on the Live dashboard or the Review page while the same camera plays fine when opened on its own.
+
+To fix it, open `about:config` in Firefox, raise `media.wmf.dxva.max-videos` (for example to `16`, or higher if you view many cameras at once), and reload Frigate. Alternatively, use H.264 streams for the dashboard (see [Setting Streams For Live UI](#setting-streams-for-live-ui)). The Firefox bug is tracked in [Mozilla bug 2043087](https://bugzilla.mozilla.org/show_bug.cgi?id=2043087).
 
 </FaqItem>
 
